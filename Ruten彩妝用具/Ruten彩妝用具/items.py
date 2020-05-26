@@ -17,3 +17,4 @@ class RutenItem(scrapy.Item):
     product_category = scrapy.Field()
     product_images = scrapy.Field()
     product_source = scrapy.Field()
+    product_subcategory = scrapy.Field()

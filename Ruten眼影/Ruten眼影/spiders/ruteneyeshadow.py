@@ -20,35 +20,41 @@ class RuteneyeshadowSpider(scrapy.Spider):
 
     def parse(self, response):
         self.driver.get(response.url)
-        res = self.driver.execute_script("return document.documentElement.outerHTML")
-        soup = BeautifulSoup(res,'html.parser')
+        res = self.driver.execute_script(
+            "return document.documentElement.outerHTML")
+        soup = BeautifulSoup(res, 'html.parser')
 
-        for href in soup.find_all('h5',{'class':'prod_name'}):
+        for href in soup.find_all('h5', {'class': 'prod_name'}):
             url = href.find('a').attrs['href']
-            yield Request(url,callback=self.parse_item)
+            yield Request(url, callback=self.parse_item)
 
-        next_page = 'https://find.ruten.com.tw/c/0012000500020001?p=' + str(RuteneyeshadowSpider.page)
-        if  RuteneyeshadowSpider.page <= 10:
-                # self.action.pause(1)
-                # self.action.perform()
+        next_page = 'https://find.ruten.com.tw/c/0012000500020001?p=' + \
+            str(RuteneyeshadowSpider.page)
+        if RuteneyeshadowSpider.page <= 4:
+            # self.action.pause(1)
+            # self.action.perform()
             RuteneyeshadowSpider.page += 1
             url = next_page
             yield response.follow(url, callback=self.parse)
 
-    def parse_item(self,response):
+    def parse_item(self, response):
         self.driver.get(response.url)
-        res = self.driver.execute_script("return document.documentElement.outerHTML")
+        res = self.driver.execute_script(
+            "return document.documentElement.outerHTML")
         item = RutenItem()
         soup = BeautifulSoup(res, 'html.parser')
 
         img = []
         item['product_url'] = str(response.request.url)
-        for image in soup.find_all('div',{'class':'item-image-wrap'}):
+        for image in soup.find_all('div', {'class': 'item-image-wrap'}):
             url = image.find('img').attrs['src']
             img.append(url)
         item['product_images'] = img[0]
-        item['product_name'] = soup.find('span',{'class':'vmiddle'}).text
-        item['product_price'] = soup.find('strong', {'class': 'rt-text-xx-large'}).text.replace('$','').replace(',','')
+        item['product_name'] = soup.find('span', {'class': 'vmiddle'}).text
+        item['product_price'] = soup.find(
+            'strong', {'class': 'rt-text-xx-large'}).text.replace('$', '').replace(',', '')
         item['product_category'] = 'EyeShadow'
         item['product_source'] = 'Ruten'
+        item['product_subcategory'] = 'eyeshadow'
+
         yield item

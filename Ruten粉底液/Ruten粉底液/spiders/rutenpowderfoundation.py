@@ -24,9 +24,16 @@ class RutenpowderfoundationSpider(scrapy.Spider):
             "return document.documentElement.outerHTML")
         soup = BeautifulSoup(res, 'html.parser')
 
-        for href in soup.find_all('h5', {'class': 'prod_name'}):
+        main = soup.find_all('h5', {'class': 'prod_name'})
+        oversea = soup.find_all('h5', {'class': 'prod_oversea'})
+
+        for href in main:
             url = href.find('a').attrs['href']
             yield Request(url, callback=self.parse_item)
+
+        for href in oversea:
+            url2 = href.find('a').attrs['href']
+            yield Request(url2, callback=self.parse_item)
 
         next_page = 'https://find.ruten.com.tw/c/0012000500010009?p=' + \
             str(RutenpowderfoundationSpider.page)
@@ -53,7 +60,7 @@ class RutenpowderfoundationSpider(scrapy.Spider):
         item['product_name'] = soup.find('span', {'class': 'vmiddle'}).text
         item['product_price'] = soup.find(
             'strong', {'class': 'rt-text-xx-large'}).text.replace('$', '').replace(',', '')
-        item['product_category'] = '底妝'
+        item['product_category'] = 'Foundation'
         item['product_source'] = 'Ruten'
-        item['product_subcategory'] = '粉底液'
+        item['product_subcategory'] = 'liquidfoundation'
         yield item

@@ -24,13 +24,20 @@ class RutenremoverSpider(scrapy.Spider):
             "return document.documentElement.outerHTML")
         soup = BeautifulSoup(res, 'html.parser')
 
-        for href in soup.find_all('h5', {'class': 'prod_name'}):
+        main = soup.find_all('h5', {'class': 'prod_name'})
+        oversea = soup.find_all('h5', {'class': 'prod_oversea'})
+
+        for href in main:
             url = href.find('a').attrs['href']
             yield Request(url, callback=self.parse_item)
 
+        for href in oversea:
+            url2 = href.find('a').attrs['href']
+            yield Request(url2, callback=self.parse_item)
+
         next_page = 'https://find.ruten.com.tw/c/001200070011?p=' + \
             str(RutenremoverSpider.page)
-        if RutenremoverSpider.page <= 40:
+        if RutenremoverSpider.page <= 4:
             # self.action.pause(1)
             # self.action.perform()
             RutenremoverSpider.page += 1
@@ -54,6 +61,6 @@ class RutenremoverSpider(scrapy.Spider):
         item['product_price'] = soup.find(
             'strong', {'class': 'rt-text-xx-large'}).text.replace('$', '').replace(',', '')
         item['product_category'] = 'Remover'
-        item['product_subcategory'] = 'Remover'
+        item['product_subcategory'] = 'remover'
         item['product_source'] = 'Ruten'
         yield item

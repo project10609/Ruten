@@ -37,7 +37,7 @@ class RutenpowderfoundationSpider(scrapy.Spider):
 
         next_page = 'https://find.ruten.com.tw/c/0012000500010009?p=' + \
             str(RutenpowderfoundationSpider.page)
-        if RutenpowderfoundationSpider.page <= 10:
+        if RutenpowderfoundationSpider.page <= 4:
             # self.action.pause(1)
             # self.action.perform()
             RutenpowderfoundationSpider.page += 1

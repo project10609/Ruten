@@ -37,7 +37,7 @@ class RutenconcealerSpider(scrapy.Spider):
 
         next_page = 'https://find.ruten.com.tw/c/0012000500010004?p=' + \
             str(RutenconcealerSpider.page)
-        if RutenconcealerSpider.page <= 10:
+        if RutenconcealerSpider.page <= 4:
             # self.action.pause(1)
             # self.action.perform()
             RutenconcealerSpider.page += 1
